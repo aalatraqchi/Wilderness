@@ -42,7 +42,7 @@ end
 function skeleton:update(dt)
     self:syncPhysics()
     self:move()
-    self:combat()
+    self:combat(start_time)
     self.currentAnim:update(dt)
 end
 
@@ -73,17 +73,21 @@ function skeleton:move()
     end
 end
 
-function skeleton:attack(time)
+function skeleton:combat(time)
     local current_time = love.timer:getTime() - time
-    self.currentAnim = self.animations.attack
-end
-
-function skeleton:pause()
-
-end
-
-function skeleton:combat()
-
+    if self.isAttacking then
+        if math.floor(current_time) % 4 == 0 then
+            self.currentAnim = self.animations.idle
+        else
+            self.currentAnim = self.animations.attack
+            if Player.currentAnim ~= Player.animations.guard and Player.currentAnim ~= Player.animations.crouchGuard then
+                local hurt = cron.every(0.3, function()
+                    Player:takeDamage(self.damage)
+                end)
+                hurt:update(current_time)
+            end
+        end
+    end
 end
 
 function skeleton:syncPhysics()

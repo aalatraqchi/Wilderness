@@ -80,12 +80,20 @@ function skeleton:combat(time)
             self.currentAnim = self.animations.idle
         else
             self.currentAnim = self.animations.attack
-            if Player.currentAnim ~= Player.animations.guard and Player.currentAnim ~= Player.animations.crouchGuard then
-                local hurt = cron.every(0.3, function()
-                    Player:takeDamage(self.damage)
-                end)
-                hurt:update(current_time)
-            end
+            self:hurtPlayer(self.damage)
+        end
+    end
+end
+
+function skeleton:hurtPlayer(dmg)
+    local current_time = love.timer:getTime() - start_time
+    local hurt = cron.after(5, function()
+        Player:takeDamage(dmg)
+    end)
+    if Player.currentAnim ~= Player.animations.guard and Player.currentAnim ~= Player.animations.crouchGuard then
+        hurt:update(current_time)
+        if current_time > 5 then
+            current_time = 0
         end
     end
 end

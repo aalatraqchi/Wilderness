@@ -63,6 +63,7 @@ function Player:takeDamage(amount)
     if self.health.current - amount > 0 then
         self.health.current = self.health.current - amount
         self:tint()
+        print(self.health.current)
     elseif self.health.current < 0 then
         self.health.current = 0
         self:die()

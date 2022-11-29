@@ -1,5 +1,6 @@
 local anim8 = require('libraries/anim8')
 local Player = {}
+local cron = require('libraries/cron')
 
 function Player:load()
     self.x = 40

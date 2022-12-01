@@ -1,6 +1,6 @@
 local anim8 = require('libraries/anim8')
+local cron = require('libraries.cron')
 local Player = {}
-local cron = require('libraries/cron')
 
 function Player:load()
     self.x = 40
@@ -18,6 +18,7 @@ function Player:load()
     self.jumpAmount = -500
     self.direction = "right"
     self.health = { current = 100, max = 100 }
+    self.damage = 10
 
     self.color = {
         red = 1,
@@ -49,30 +50,23 @@ function Player:loadAssets()
     self.animations.idle = anim8.newAnimation(self.grid('1-1', 1), 0.01)
     self.animations.jump = anim8.newAnimation(self.grid('8-10', 2), 0.5)
     self.animations.crouch = anim8.newAnimation(self.grid('10-10', 1), 0.01)
-    self.animations.attackV = anim8.newAnimation(self.grid('1-4', 3), 0.15) -- vertical attack animations
-    self.animations.attackH = anim8.newAnimation(self.grid('5-9', 3), 0.15) -- horizontal attack animations
+    self.animations.attackH = anim8.newAnimation(self.grid('5-9', 3), 0.2) -- horizontal attack animations
     self.animations.guard = anim8.newAnimation(self.grid('10-10', 3), 0.01)
-    self.animations.attackCrouchedV = anim8.newAnimation(self.grid('1-4', 4), 0.2) -- vertical attack animations
     self.animations.attackCrouchedH = anim8.newAnimation(self.grid('5-9', 4), 0.2) -- horizontal attack animations
     self.animations.crouchGuard = anim8.newAnimation(self.grid('10-10', 4), 0.01)
 
     self.currentAnim = self.animations.idle
 end
 
-function Player:takeDamage(amount)
+function Player:takeDamage(dt, amount)
     if self.health.current - amount > 0 then
-        self.health.current = self.health.current - amount
+        Player.health.current = Player.health.current - amount
         self:tint()
-        print(self.health.current)
-    elseif self.health.current < 0 then
+    else
         self.health.current = 0
-        self:die()
+        self.alive = false
     end
-end
-
-function Player:die()
-    self.xVel = 0
-    self.currentAnim = self.animations.death
+    print(self.health.current)
 end
 
 function Player:respawn()
@@ -137,21 +131,13 @@ end
 function Player:attack()
     if love.keyboard.isDown('j') then
         if self.crouched then
-            self.currentAnim = self.animations.attackCrouchedV
-        else
-            self.currentAnim = self.animations.attackV
-        end
-        self.xVel = 0
-        self:changeDirection()
-    elseif love.keyboard.isDown('k') then
-        if self.crouched then
             self.currentAnim = self.animations.attackCrouchedH
         else
             self.currentAnim = self.animations.attackH
         end
         self.xVel = 0
         self:changeDirection()
-    elseif love.keyboard.isDown('l') then
+    elseif love.keyboard.isDown('k') then
         if self.crouched then
             self.currentAnim = self.animations.crouchGuard
         else

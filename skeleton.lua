@@ -16,7 +16,7 @@ function skeleton:load(x, y)
     self.health = { current = 50, max = 50 }
     self.range = { left = self.x - 100, right = self.x + 100 }
     self.attackRange = 16.6
-    self.damage = 10
+    self.damage = 1
 
     self.color = {
         red = 1,
@@ -24,7 +24,6 @@ function skeleton:load(x, y)
         blue = 1,
         speed = 3
     }
-
 
     self.isAttacking = false
     self.alive = true
@@ -49,6 +48,10 @@ end
 
 local hurt = cron.every(0.3, function()
     skeleton.health.current = skeleton.health.current - Player.damage
+end)
+
+local hurtPlayer = cron.every(0.1, function()
+    Player.health.current = Player.health.current - skeleton.damage
 end)
 
 function skeleton:tint()
@@ -103,21 +106,24 @@ end
 function skeleton:combat(dt)
     local current_time = love.timer:getTime() - start_time
     if self.isAttacking then
-        if math.floor(current_time) % 6 ~= 0 and math.floor(current_time) % 5 ~= 0 then
+        if math.floor(current_time) % 6 ~= 0 then
             self.currentAnim = self.animations.attack
-            self:hurtPlayer(dt, 1, self.damage)
+            self:hurtPlayer(dt)
         else
             self.currentAnim = self.animations.idle
         end
     end
 end
 
-function skeleton:hurtPlayer(dt, t, dmg)
-    local hurt = cron.every(t, function()
-        Player:takeDamage(dt, dmg)
-    end)
-    if Player.currentAnim ~= Player.animations.guard and Player.currentAnim ~= Player.animations.crouchGuard then
-        hurt:update(dt)
+function skeleton:hurtPlayer(dt)
+    if Player.health.current > 0 then
+        if Player.currentAnim ~= Player.animations.guard and Player.currentAnim ~= Player.animations.crouchGuard then
+            hurtPlayer:update(dt)
+            Player:tint()
+        end
+    else
+        Player.health.current = 0
+        Player.alive = false
     end
 end
 

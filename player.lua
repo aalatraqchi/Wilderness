@@ -1,5 +1,4 @@
 local anim8 = require('libraries/anim8')
-local cron = require('libraries.cron')
 local Player = {}
 
 function Player:load()
@@ -56,17 +55,6 @@ function Player:loadAssets()
     self.animations.crouchGuard = anim8.newAnimation(self.grid('10-10', 4), 0.01)
 
     self.currentAnim = self.animations.idle
-end
-
-function Player:takeDamage(dt, amount)
-    if self.health.current - amount > 0 then
-        Player.health.current = Player.health.current - amount
-        self:tint()
-    else
-        self.health.current = 0
-        self.alive = false
-    end
-    print(self.health.current)
 end
 
 function Player:respawn()

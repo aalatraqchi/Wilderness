@@ -1,4 +1,4 @@
-local anim8 = require('libraries/anim8')
+local anim8 = require('libraries.anim8')
 local Player = {}
 
 function Player:load()

@@ -7,7 +7,7 @@ function GUI:load()
     self.health.image = love.graphics.newImage('assets/heart.png')
     self.health.width = self.health.image:getWidth()
     self.health.height = self.health.image:getHeight()
-    self.health.scale = 0.1
+    self.health.scale = 0.2
     self.health.x = 20
     self.health.y = 10
 end
@@ -28,7 +28,8 @@ function GUI:displayHealth()
 
 
     local x = self.health.x + self.health.width * self.health.scale
-    local y = self.health.y + self.health.height * 0.2 * self.health.scale
+    local y = self.health.y + self.health.height * 0.5 * self.health.scale
+    love.graphics.setNewFont(24)
     love.graphics.print(" : " .. Player.health.current, x, y)
 end
 

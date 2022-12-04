@@ -1,5 +1,5 @@
 local Player = require('player')
-local anim8 = require('libraries/anim8')
+local anim8 = require('libraries.anim8')
 local cron = require('libraries.cron')
 local start_time = love.timer:getTime()
 
@@ -36,7 +36,13 @@ function skeleton:load(x, y)
     self.animations.left = anim8.newAnimation(self.grid('2-7', 1), 0.2)
     self.animations.idle = anim8.newAnimation(self.grid('1-1', 1), 0.01)
     self.animations.attack = anim8.newAnimation(self.grid('5-9', 3), 0.5)
-    self.animations.death = anim8.newAnimation(self.grid('2-3', 6), 0.4, 'pauseAtEnd')
+
+    self.animations.death = {}
+    self.animations.falling = anim8.newAnimation(self.grid('2-3', 6), 0.2, 'pauseAtEnd')
+    self.animations.falling1 = anim8.newAnimation(self.grid('4-4', 6), 0.2)
+    self.animations.death[1] = anim8.newAnimation(self.grid('5-5', 6), 0.01)
+    self.animations.death[2] = anim8.newAnimation(self.grid('6-6', 6), 0.01)
+
     self.currentAnim = self.animations.idle
 
     self.physics = {}
@@ -72,6 +78,7 @@ function skeleton:update(dt)
     self:combat(dt)
     self:attacked(dt)
     self.currentAnim:update(dt)
+    self:updateDeathAnims(dt)
 end
 
 function skeleton:moveLeft()
@@ -142,8 +149,15 @@ end
 
 function skeleton:die()
     self.isAttacking = false
+    self.alive = false
     self.xVel = 0
-    self.currentAnim = self.animations.death
+    self.currentAnim = self.animations.falling
+end
+
+function skeleton:updateDeathAnims(dt)
+    for _, death in ipairs(self.animations.death) do
+        death:update(dt)
+    end
 end
 
 function skeleton:syncPhysics()
@@ -176,9 +190,22 @@ function skeleton:draw()
     elseif self.direction == "left" then
         xScale = -1
     end
+
     love.graphics.setColor(self.color.red, self.color.green, self.color.blue)
-    self.currentAnim:draw(self.spriteSheet, self.x, self.y - 8, nil, xScale, 1,
-        self.width / 2, self.height / 2)
+
+    if not self.alive then
+        self.animations.death[1]:draw(self.spriteSheet, self.x, self.y - 8, nil, xScale, 1,
+            self.width / 2, self.height / 2)
+        self.animations.death[2]:draw(self.spriteSheet, self.x + 28, self.y - 8, nil, xScale, 1,
+            self.width / 2, self.height / 2)
+    else
+        self.currentAnim:draw(self.spriteSheet, self.x, self.y - 8, nil, xScale, 1,
+            self.width / 2, self.height / 2)
+        if self.currentAnim == self.animations.falling then
+            self.animations.falling1:draw(self.spriteSheet, self.x + 32, self.y - 8, nil, xScale, 1,
+                self.width / 2, self.height / 2)
+        end
+    end
     love.graphics.setColor(1, 1, 1, 1)
 end
 

@@ -5,8 +5,9 @@ love.graphics.setDefaultFilter("nearest", "nearest")
 local STI = require('sti')
 local Player = require('player')
 local Camera = require('camera')
-local skeleton = require('skeleton')
+--local skeleton = require('skeleton')
 local GUI = require('gui')
+local Skeleton = require('test')
 
 function love.load()
     Map = STI('map/1.lua', { 'box2d' })
@@ -18,15 +19,19 @@ function love.load()
     MapWidth = Map.layers.Ground.width * 32
     Background = love.graphics.newImage('assets/purple background.jpg')
     GUI:load()
+    Skeleton.loadAssets()
     Player:load()
-    SpawnEnemies()
+    for _, object in pairs(Map.layers.Enemies.objects) do
+        Skeleton.new(object.x + object.width / 2, object.y + object.height / 2)
+    end
 end
 
 function love.update(dt)
     World:update(dt)
     Player:update(dt)
+    Skeleton.updateAll(dt)
     Camera:setPosition(Player.x, 0)
-    skeleton:update(dt)
+    --skeleton:update(dt)
     GUI:update(dt)
 end
 
@@ -36,9 +41,10 @@ function love.draw()
 
     Camera:apply()
     Player:draw()
-    skeleton:draw()
-    GUI:draw()
+    Skeleton.drawAll()
+    --skeleton:draw()
     Camera:clear()
+    GUI:draw()
 end
 
 function love.keypressed(key)
@@ -46,19 +52,19 @@ function love.keypressed(key)
 end
 
 function BeginContact(a, b, collision)
-    skeleton:beginContact(a, b, collision)
+    Skeleton.beginContact(a, b, collision)
     Player:beginContact(a, b, collision)
 end
 
 function EndContact(a, b, collision)
-    skeleton:endContact(a, b, collision)
+    Skeleton.endContact(a, b, collision)
     Player:endContact(a, b, collision)
 end
 
 function SpawnEnemies()
-    for _, v in ipairs(Map.layers.Enemies.objects) do
-        if v.class == "skeleton" then
-            skeleton:load(v.x, v.y)
-        end
+    for _, object in ipairs(Map.layers.Enemies.objects) do
+        --if object.class == "skeleton" then
+        Skeleton.new(object.x + object.width / 2, object.y + object.height / 2)
+        --end
     end
 end

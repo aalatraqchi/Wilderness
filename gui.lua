@@ -1,5 +1,5 @@
 love.graphics.setDefaultFilter("nearest", "nearest")
-local Player = require('player')
+local Player = require 'player'
 local GUI = {}
 
 function GUI:load()
@@ -10,6 +10,10 @@ function GUI:load()
     self.health.scale = 0.2
     self.health.x = 20
     self.health.y = 10
+
+    self.kills = {}
+    self.kills.x = 950
+    self.kills.y = 400
 end
 
 function GUI:update(dt)
@@ -31,6 +35,12 @@ function GUI:displayHealth()
     local y = self.health.y + self.health.height * 0.5 * self.health.scale
     love.graphics.setNewFont(24)
     love.graphics.print(" : " .. Player.health.current, x, y)
+end
+
+function GUI:killsNeeded(total)
+    love.graphics.setNewFont(14)
+    love.graphics.print("Must Kill All Enemies Before Proceeding!", self.kills.x, self.kills.y)
+    love.graphics.print("Enemies Remaining: " .. total - Player.kills, self.kills.x, self.kills.y + 20)
 end
 
 return GUI

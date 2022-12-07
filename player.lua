@@ -1,4 +1,4 @@
-local anim8 = require('libraries.anim8')
+local anim8 = require 'libraries.anim8'
 local Player = {}
 
 function Player:load()
@@ -18,6 +18,7 @@ function Player:load()
     self.direction = "right"
     self.health = { current = 100, max = 100 }
     self.damage = 10
+    self.kills = 0
 
     self.color = {
         red = 1,
@@ -59,10 +60,14 @@ end
 
 function Player:respawn()
     if not self.alive then
-        self.physics.body:setPosition(self.startX, self.startY)
+        self:resetPosition()
         self.health.current = self.health.max
         self.alive = true
     end
+end
+
+function Player:resetPosition()
+    self.physics.body:setPosition(self.startX, self.startY)
 end
 
 function Player:tint()
@@ -87,6 +92,7 @@ function Player:update(dt)
     self:applyGravity(dt)
     self.currentAnim:update(dt)
     self:setDirection()
+    print(self.kills)
 end
 
 function Player:setDirection()

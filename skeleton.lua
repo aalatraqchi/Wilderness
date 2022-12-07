@@ -1,6 +1,6 @@
-local Player = require('player')
-local anim8 = require('libraries.anim8')
-local cron = require('libraries.cron')
+local Player = require 'player'
+local anim8 = require 'libraries.anim8'
+local cron = require 'libraries.cron'
 local start_time = love.timer:getTime()
 
 local Skeleton = {}
@@ -55,6 +55,14 @@ function Skeleton.new(x, y)
     instance.physics.shape = love.physics.newRectangleShape(instance.width / 2, instance.height * 0.75)
     instance.physics.fixture = love.physics.newFixture(instance.physics.body, instance.physics.shape)
     table.insert(activeSkeletons, instance)
+end
+
+function Skeleton.clearAll()
+    for _, skeleton in ipairs(activeSkeletons) do
+        skeleton.physics.body:destroy()
+    end
+
+    activeSkeletons = {} -- set active skeletons to clean table, this will be called with new map to reset enemies
 end
 
 function Skeleton.loadAssets()
@@ -170,6 +178,7 @@ function Skeleton:attacked(dt)
 end
 
 function Skeleton:die()
+    Player.kills = Player.kills + 1
     self.isAttacking = false
     self.alive = false
     self.xVel = 0

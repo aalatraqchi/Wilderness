@@ -6,10 +6,15 @@ local Player = require 'player'
 local Camera = require 'camera'
 local GUI = require 'gui'
 local Skeleton = require 'skeleton'
+local Goblin = require 'goblin'
+local Centurion = require 'centurion'
 local Map = require 'map'
+
 
 function love.load()
     Skeleton.loadAssets()
+    Goblin.loadAssets()
+    Centurion.loadAssets()
     Map:load()
     Background = love.graphics.newImage('assets/purple background.jpg')
     GUI:load()
@@ -20,6 +25,8 @@ function love.update(dt)
     World:update(dt)
     Player:update(dt)
     Skeleton.updateAll(dt)
+    Goblin.updateAll(dt)
+    Centurion.updateAll(dt)
     Camera:setPosition(Player.x, 0)
     GUI:update(dt)
 end
@@ -30,7 +37,9 @@ function love.draw()
 
     Camera:apply()
     Player:draw()
+    Goblin.drawAll()
     Skeleton.drawAll()
+    Centurion.drawAll()
     Camera:clear()
     GUI:draw()
     Map:update()
@@ -42,10 +51,14 @@ end
 
 function BeginContact(a, b, collision)
     Skeleton.beginContact(a, b, collision)
+    Centurion.beginContact(a, b, collision)
+    Goblin.beginContact(a, b, collision)
     Player:beginContact(a, b, collision)
 end
 
 function EndContact(a, b, collision)
     Skeleton.endContact(a, b, collision)
+    Centurion.endContact(a, b, collision)
+    Goblin.endContact(a, b, collision)
     Player:endContact(a, b, collision)
 end

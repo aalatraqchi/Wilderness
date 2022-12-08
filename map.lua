@@ -2,6 +2,8 @@ local STI = require 'sti'
 local Player = require 'player'
 local Skeleton = require 'skeleton'
 local GUI = require 'gui'
+local Goblin = require 'goblin'
+local Centurion = require 'centurion'
 
 local Map = {}
 
@@ -22,7 +24,9 @@ function Map:initialize()
     self.ground = self.stage.layers.ground
 
     self.collidables.visible = false
-    self.enemies.visible = false
+    if #self.enemies.objects > 0 then
+        self.enemies.visible = false
+    end
     MapWidth = self.ground.width * 32
 
     self:spawnEnemies()
@@ -38,6 +42,7 @@ end
 function Map:clearPrevious()
     self.stage:box2d_removeLayer("collidable")
     Skeleton.clearAll()
+    Goblin.clearAll()
 end
 
 function Map:update()
@@ -55,6 +60,10 @@ function Map:spawnEnemies()
     for _, object in ipairs(self.enemies.objects) do
         if object.class == "skeleton" then
             Skeleton.new(object.x + object.width / 2, object.y + object.height / 2)
+        elseif object.class == "goblin" then
+            Goblin.new(object.x + object.width / 2, object.y + object.height / 2)
+        elseif object.class == "centurion" then
+            Centurion.new(object.x + object.width / 2, object.y + object.height / 2)
         end
     end
 end

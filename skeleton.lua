@@ -37,13 +37,11 @@ function Skeleton.new(x, y)
     instance.out = false
 
     instance.animations = {}
-    instance.animations.right = anim8.newAnimation(Skeleton.grid('2-7', 1), 0.2)
-    instance.animations.left = anim8.newAnimation(Skeleton.grid('2-7', 1), 0.2)
+    instance.animations.walk = anim8.newAnimation(Skeleton.grid('2-7', 1), 0.2)
     instance.animations.idle = anim8.newAnimation(Skeleton.grid('1-1', 1), 0.01)
     instance.animations.attack = anim8.newAnimation(Skeleton.grid('5-9', 3), 0.5)
 
     instance.animations.death = {}
-    instance.animations.falling = anim8.newAnimation(Skeleton.grid('1-3', 6), 0.2)
     instance.animations.death[1] = anim8.newAnimation(Skeleton.grid('5-5', 6), 0.01)
     instance.animations.death[2] = anim8.newAnimation(Skeleton.grid('6-6', 6), 0.01)
 
@@ -113,13 +111,13 @@ end
 function Skeleton:moveLeft()
     self.direction = "left"
     self.xVel = -self.speed
-    self.currentAnim = self.animations.left
+    self.currentAnim = self.animations.walk
 end
 
 function Skeleton:moveRight()
     self.direction = "right"
     self.xVel = self.speed
-    self.currentAnim = self.animations.right
+    self.currentAnim = self.animations.walk
 end
 
 function Skeleton:stop()
@@ -129,10 +127,14 @@ end
 
 function Skeleton:move()
     if self.alive then
-        if Player.x > self.range.left and Player.x < self.x - self.attackRange then
-            self:moveLeft()
-        elseif Player.x < self.range.right and Player.x > self.x + self.attackRange then
-            self:moveRight()
+        if math.abs(Player.y - self.y) < 100 then -- This ensures enemy and player are on the same level before the enemy approaches
+            if Player.x > self.range.left and Player.x < self.x - self.attackRange then
+                self:moveLeft()
+            elseif Player.x < self.range.right and Player.x > self.x + self.attackRange then
+                self:moveRight()
+            else
+                self:stop()
+            end
         else
             self:stop()
         end
@@ -142,11 +144,11 @@ end
 function Skeleton:combat(dt)
     local current_time = love.timer:getTime() - start_time
     if self.isAttacking then
-        if math.floor(current_time) % 6 ~= 0 then
+        if math.floor(current_time) % 4 == 0 then
+            self.currentAnim = self.animations.idle
+        else
             self.currentAnim = self.animations.attack
             self:hurtPlayer(dt)
-        else
-            self.currentAnim = self.animations.idle
         end
     end
 end

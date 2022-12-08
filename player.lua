@@ -1,8 +1,9 @@
 local anim8 = require 'libraries.anim8'
+local Sounds = require 'sounds'
 local Player = {}
 
 function Player:load()
-    self.x = 40
+    self.x = 60
     self.y = 0
     self.startX = self.x
     self.startY = self.y
@@ -50,9 +51,9 @@ function Player:loadAssets()
     self.animations.idle = anim8.newAnimation(self.grid('1-1', 1), 0.01)
     self.animations.jump = anim8.newAnimation(self.grid('8-10', 2), 0.5)
     self.animations.crouch = anim8.newAnimation(self.grid('10-10', 1), 0.01)
-    self.animations.attackH = anim8.newAnimation(self.grid('5-9', 3), 0.2) -- horizontal attack animations
+    self.animations.attack = anim8.newAnimation(self.grid('5-9', 3), 0.2) -- horizontal attack animations
     self.animations.guard = anim8.newAnimation(self.grid('10-10', 3), 0.01)
-    self.animations.attackCrouchedH = anim8.newAnimation(self.grid('5-9', 4), 0.2) -- horizontal attack animations
+    self.animations.attackCrouched = anim8.newAnimation(self.grid('5-9', 4), 0.2) -- horizontal attack animations
     self.animations.crouchGuard = anim8.newAnimation(self.grid('10-10', 4), 0.01)
 
     self.currentAnim = self.animations.idle
@@ -124,9 +125,9 @@ end
 function Player:attack()
     if love.keyboard.isDown('j') then
         if self.crouched then
-            self.currentAnim = self.animations.attackCrouchedH
+            self.currentAnim = self.animations.attackCrouched
         else
-            self.currentAnim = self.animations.attackH
+            self.currentAnim = self.animations.attack
         end
         self.xVel = 0
         self:changeDirection()
@@ -139,6 +140,10 @@ function Player:attack()
         self.xVel = 0
         self:changeDirection()
     end
+end
+
+function Player:miss()
+    Sounds.hits.miss:play()
 end
 
 function Player:applyFriction(dt)

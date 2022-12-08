@@ -1,6 +1,7 @@
 local Player = require 'player'
 local anim8 = require 'libraries.anim8'
 local cron = require 'libraries.cron'
+local Sounds = require 'sounds'
 local start_time = love.timer:getTime()
 
 local Goblin = {}
@@ -39,7 +40,7 @@ function Goblin.new(x, y)
     instance.animations = {}
     instance.animations.walk = anim8.newAnimation(Goblin.grid('2-7', 1), 0.2)
     instance.animations.idle = anim8.newAnimation(Goblin.grid('1-1', 1), 0.01)
-    instance.animations.attack = anim8.newAnimation(Goblin.grid('5-9', 3), 0.6)
+    instance.animations.attack = anim8.newAnimation(Goblin.grid('5-9', 3), 0.1)
 
     instance.animations.death = {}
     instance.animations.death[1] = anim8.newAnimation(Goblin.grid('7-7', 2), 0.01)
@@ -69,15 +70,18 @@ function Goblin.loadAssets()
         Goblin.spriteSheet:getHeight())
 end
 
-local hurt = cron.every(0.3, function()
+local hurt = cron.every(0.5, function()
     for _, instance in ipairs(activeGoblins) do
         instance.health.current = instance.health.current - Player.damage
+        Sounds.hits.punch:play()
+        Sounds.hurt.goblin:play()
     end
 end)
 
-local hurtPlayer = cron.every(0.6, function()
+local hurtPlayer = cron.every(0.5, function()
     for _, instance in ipairs(activeGoblins) do
         Player.health.current = Player.health.current - instance.damage / #activeGoblins
+        Sounds.hurt.player:play()
     end
 end)
 
@@ -144,7 +148,7 @@ end
 function Goblin:combat(dt)
     local current_time = love.timer:getTime() - start_time
     if self.isAttacking then
-        if math.floor(current_time) % 2 then
+        if math.floor(current_time) % 4 == 0 or math.floor(current_time) % 4.5 == 0 then
             self.currentAnim = self.animations.idle
         else
             self.currentAnim = self.animations.attack
@@ -167,8 +171,8 @@ end
 
 function Goblin:attacked(dt)
     if self.isAttacking then
-        if Player.currentAnim == Player.animations.attackCrouchedH or
-            Player.currentAnim == Player.animations.attackH then
+        if Player.currentAnim == Player.animations.attackCrouched or
+            Player.currentAnim == Player.animations.attack then
             hurt:update(dt)
             self:tint()
             if self.health.current < 0 then

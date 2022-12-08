@@ -429,8 +429,8 @@ return {
       objects = {
         {
           id = 15,
-          name = "Skeleton",
-          class = "skeleton",
+          name = "Goblin",
+          class = "goblin",
           shape = "rectangle",
           x = 384,
           y = 254.667,
@@ -458,8 +458,8 @@ return {
           name = "Skeleton",
           class = "skeleton",
           shape = "rectangle",
-          x = 1078,
-          y = 255.333,
+          x = 1215.33,
+          y = -18.667,
           width = 32,
           height = 64,
           rotation = 0,

@@ -92,7 +92,6 @@ function Player:update(dt)
     self:applyGravity(dt)
     self.currentAnim:update(dt)
     self:setDirection()
-    print(self.kills)
 end
 
 function Player:setDirection()

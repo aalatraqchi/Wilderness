@@ -148,8 +148,8 @@
   </object>
  </objectgroup>
  <objectgroup color="#005500" id="6" name="enemies">
-  <object id="15" name="Skeleton" class="skeleton" x="384" y="254.667" width="32" height="64"/>
+  <object id="15" name="Goblin" class="goblin" x="384" y="254.667" width="32" height="64"/>
   <object id="16" name="Skeleton" class="skeleton" x="940" y="254.667" width="32" height="64"/>
-  <object id="17" name="Skeleton" class="skeleton" x="1078" y="255.333" width="32" height="64"/>
+  <object id="17" name="Skeleton" class="skeleton" x="1215.33" y="-18.667" width="32" height="64"/>
  </objectgroup>
 </map>

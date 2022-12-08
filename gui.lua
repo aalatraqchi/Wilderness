@@ -14,14 +14,22 @@ function GUI:load()
     self.kills = {}
     self.kills.x = 950
     self.kills.y = 400
+    self.kills.text1 = "Must Kill All Enemies Before Proceeding!"
+    self.kills.text2 = "Enemies remaining: "
+
+    self.objective = {}
+    self.objective.x = 30
+    self.objective.y = 400
+    self.objective.text = "Kill all enemies and reach the end to proceed to the next stage!"
 end
 
 function GUI:update(dt)
-
+    self:objectiveMessage()
 end
 
 function GUI:draw()
     self:displayHealth()
+    self:objectiveMessage()
 end
 
 function GUI:displayHealth()
@@ -39,8 +47,15 @@ end
 
 function GUI:killsNeeded(total)
     love.graphics.setNewFont(14)
-    love.graphics.print("Must Kill All Enemies Before Proceeding!", self.kills.x, self.kills.y)
-    love.graphics.print("Enemies Remaining: " .. total - Player.kills, self.kills.x, self.kills.y + 20)
+    love.graphics.print(self.kills.text1, self.kills.x, self.kills.y)
+    love.graphics.print(self.kills.text2 .. total - Player.kills, self.kills.x, self.kills.y + 20)
+end
+
+function GUI:objectiveMessage()
+    if Player.x <= Player.startX then
+        love.graphics.setNewFont(16)
+        love.graphics.print(self.objective.text, self.objective.x, self.objective.y)
+    end
 end
 
 return GUI

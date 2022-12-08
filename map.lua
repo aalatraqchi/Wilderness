@@ -27,6 +27,7 @@ function Map:initialize()
     if #self.enemies.objects > 0 then
         self.enemies.visible = false
     end
+
     MapWidth = self.ground.width * 32
 
     self:spawnEnemies()
@@ -43,15 +44,21 @@ function Map:clearPrevious()
     self.stage:box2d_removeLayer("collidable")
     Skeleton.clearAll()
     Goblin.clearAll()
+    Centurion.clearAll()
 end
 
 function Map:update()
     if Player.x > MapWidth - 32 then
-        if Player.kills == #self.enemies.objects then
-            Map:nextStage()
-            Player.kills = 0
+        if #self.enemies.objects > 0 then
+            if Player.kills == #self.enemies.objects then
+                Map:nextStage()
+                Player.kills = 0
+            else
+                GUI:killsNeeded(#self.enemies.objects)
+                GUI:objectiveMessage()
+            end
         else
-            GUI:killsNeeded(#self.enemies.objects)
+            Map:nextStage()
         end
     end
 end

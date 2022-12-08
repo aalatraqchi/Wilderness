@@ -9,9 +9,11 @@ local Skeleton = require 'skeleton'
 local Goblin = require 'goblin'
 local Centurion = require 'centurion'
 local Map = require 'map'
+local Sounds = require 'sounds'
 
 
 function love.load()
+    Sounds:load()
     Skeleton.loadAssets()
     Goblin.loadAssets()
     Centurion.loadAssets()
@@ -19,6 +21,8 @@ function love.load()
     Background = love.graphics.newImage('assets/purple background.jpg')
     GUI:load()
     Player:load()
+
+    Sounds.music:play()
 end
 
 function love.update(dt)

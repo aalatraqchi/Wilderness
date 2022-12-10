@@ -80,9 +80,19 @@ end)
 
 local hurtPlayer = cron.every(1.25, function()
     for _, instance in ipairs(activeCenturions) do
+        Sounds.hits.punch:play()
+        Player:tint()
         Player.health.current = Player.health.current - instance.damage / #activeCenturions
         Sounds.hurt.player:play()
     end
+end)
+
+local walk1 = cron.every(0.6, function()
+    Sounds.move.walk1:play()
+end)
+
+local walk2 = cron.every(1.2, function()
+    Sounds.move.walk2:play()
 end)
 
 function Centurion:tint()
@@ -104,7 +114,7 @@ end
 function Centurion:update(dt)
     self:untint(dt)
     self:syncPhysics()
-    self:move()
+    self:move(dt)
     self:combat(dt)
     self:attacked(dt)
     self.currentAnim:update(dt)
@@ -129,13 +139,17 @@ function Centurion:stop()
     self.currentAnim = self.animations.idle
 end
 
-function Centurion:move()
+function Centurion:move(dt)
     if self.alive then
         if math.abs(Player.y - self.y) < 100 then -- This ensures enemy and player are on the same level before the enemy approaches
             if Player.x > self.range.left and Player.x < self.x - self.attackRange then
                 self:moveLeft()
+                walk1:update(dt)
+                walk2:update(dt)
             elseif Player.x < self.range.right and Player.x > self.x + self.attackRange then
                 self:moveRight()
+                walk1:update(dt)
+                walk2:update(dt)
             else
                 self:stop()
             end
@@ -148,8 +162,9 @@ end
 function Centurion:combat(dt)
     local current_time = love.timer:getTime() - start_time
     if self.isAttacking then
-        if math.floor(current_time) % 3 ~= 0 then
+        if math.floor(current_time) % 6 == 0 then
             self.currentAnim = self.animations.idle
+            self.animations.attack:gotoFrame(1) -- reset animation to start over after pause
         else
             self.currentAnim = self.animations.attack
             self:hurtPlayer(dt)
@@ -161,7 +176,6 @@ function Centurion:hurtPlayer(dt)
     if Player.health.current > 0 then
         if Player.currentAnim ~= Player.animations.guard and Player.currentAnim ~= Player.animations.crouchGuard then
             hurtPlayer:update(dt)
-            Player:tint()
         end
     else
         Player.health.current = 0

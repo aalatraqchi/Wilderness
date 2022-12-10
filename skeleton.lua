@@ -78,15 +78,21 @@ local hurt = cron.every(0.5, function()
     end
 end)
 
-local hurtPlayer = cron.every(0.5, function()
+local hurtPlayer = cron.every(1, function()
     for _, instance in ipairs(activeSkeletons) do
         Player.health.current = Player.health.current - instance.damage / #activeSkeletons
+        Player:tint()
+        Sounds.hits.punch:play()
         Sounds.hurt.player:play()
     end
 end)
 
-local miss = cron.every(0.5, function()
-    Player:miss()
+local walk1 = cron.every(0.7, function()
+    Sounds.move.walk1:play()
+end)
+
+local walk2 = cron.every(1.4, function()
+    Sounds.move.walk2:play()
 end)
 
 function Skeleton:tint()
@@ -108,7 +114,7 @@ end
 function Skeleton:update(dt)
     self:untint(dt)
     self:syncPhysics()
-    self:move()
+    self:move(dt)
     self:combat(dt)
     self:attacked(dt)
     self.currentAnim:update(dt)
@@ -133,13 +139,17 @@ function Skeleton:stop()
     self.currentAnim = self.animations.idle
 end
 
-function Skeleton:move()
+function Skeleton:move(dt)
     if self.alive then
         if math.abs(Player.y - self.y) < 100 then -- This ensures enemy and player are on the same level before the enemy approaches
             if Player.x > self.range.left and Player.x < self.x - self.attackRange then
                 self:moveLeft()
+                walk1:update(dt)
+                walk2:update(dt)
             elseif Player.x < self.range.right and Player.x > self.x + self.attackRange then
                 self:moveRight()
+                walk1:update(dt)
+                walk2:update(dt)
             else
                 self:stop()
             end
@@ -154,6 +164,7 @@ function Skeleton:combat(dt)
     if self.isAttacking then
         if math.floor(current_time) % 4 == 0 or math.floor(current_time) % 4.5 == 0 then
             self.currentAnim = self.animations.idle
+            self.animations.attack:gotoFrame(1) -- reset animation to start over after pause
         else
             self.currentAnim = self.animations.attack
             self:hurtPlayer(dt)
@@ -165,7 +176,6 @@ function Skeleton:hurtPlayer(dt)
     if Player.health.current > 0 then
         if Player.currentAnim ~= Player.animations.guard and Player.currentAnim ~= Player.animations.crouchGuard then
             hurtPlayer:update(dt)
-            Player:tint()
         end
     else
         Player.health.current = 0

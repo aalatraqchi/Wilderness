@@ -1,5 +1,6 @@
 local anim8 = require 'libraries.anim8'
 local Sounds = require 'sounds'
+local cron = require 'libraries.cron'
 local Player = {}
 
 function Player:load()
@@ -59,8 +60,17 @@ function Player:loadAssets()
     self.currentAnim = self.animations.idle
 end
 
+local walk1 = cron.every(0.5, function()
+    Sounds.move.walk1:play()
+end)
+
+local walk2 = cron.every(1, function()
+    Sounds.move.walk2:play()
+end)
+
 function Player:respawn()
     if not self.alive then
+        Sounds.death.player:play()
         self:resetPosition()
         self.health.current = self.health.max
         self.alive = true
@@ -87,6 +97,7 @@ function Player:update(dt)
     self:respawn()
     self:syncPhysics()
     self:move(dt)
+    self:moveSounds(dt)
     self:jump()
     self:crouch()
     self:attack()
@@ -122,6 +133,15 @@ function Player:move(dt)
     end
 end
 
+function Player:moveSounds(dt)
+    if self.grounded then
+        if self.xVel ~= 0 then
+            walk1:update(dt)
+            walk2:update(dt)
+        end
+    end
+end
+
 function Player:attack()
     if love.keyboard.isDown('j') then
         if self.crouched then
@@ -140,10 +160,6 @@ function Player:attack()
         self.xVel = 0
         self:changeDirection()
     end
-end
-
-function Player:miss()
-    Sounds.hits.miss:play()
 end
 
 function Player:applyFriction(dt)
@@ -190,6 +206,7 @@ function Player:jump(key)
             self.hasDoubleJump = false
             self.yVel = self.jumpAmount * 0.9
         end
+        Sounds.move.jump:play()
     end
 end
 

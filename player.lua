@@ -4,7 +4,7 @@ local cron = require 'libraries.cron'
 local Player = {}
 
 function Player:load()
-    self.x = 60
+    self.x = 30
     self.y = 0
     self.startX = self.x
     self.startY = self.y
@@ -136,8 +136,10 @@ end
 function Player:moveSounds(dt)
     if self.grounded then
         if self.xVel ~= 0 then
-            walk1:update(dt)
-            walk2:update(dt)
+            if self.maxSpeed == 100 then
+                walk1:update(dt)
+                walk2:update(dt)
+            end
         end
     end
 end

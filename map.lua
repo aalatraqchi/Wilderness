@@ -9,6 +9,7 @@ local Map = {}
 
 function Map:load()
     self.currentStage = 1
+    self.maxStages = 4
     World = love.physics.newWorld(0, 0)
     World:setCallbacks(BeginContact, EndContact)
 
@@ -35,7 +36,9 @@ end
 
 function Map:nextStage()
     self:clearPrevious()
-    self.currentStage = self.currentStage + 1
+    if self.currentStage <= self.maxStages then
+        self.currentStage = self.currentStage + 1
+    end
     self:initialize()
     Player:resetPosition()
 end
@@ -48,6 +51,9 @@ function Map:clearPrevious()
 end
 
 function Map:update()
+    if self.currentStage == 4 then
+        Player.maxSpeed = 500
+    end
     if Player.x > MapWidth - 32 then
         if #self.enemies.objects > 0 then
             if Player.kills == #self.enemies.objects then

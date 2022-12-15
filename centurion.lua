@@ -87,6 +87,10 @@ local hurtPlayer = cron.every(1.25, function()
     end
 end)
 
+local impact = cron.every(1.25, function()
+    Sounds.hits.punch:play()
+end)
+
 local walk1 = cron.every(0.6, function()
     Sounds.move.walk1:play()
 end)
@@ -167,6 +171,7 @@ function Centurion:combat(dt)
             self.animations.attack:gotoFrame(1) -- reset animation to start over after pause
         else
             self.currentAnim = self.animations.attack
+            impact:update(dt)
             self:hurtPlayer(dt)
         end
     end

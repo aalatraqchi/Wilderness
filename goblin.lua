@@ -82,9 +82,12 @@ local hurtPlayer = cron.every(0.5, function()
     for _, instance in ipairs(activeGoblins) do
         Player:tint()
         Player.health.current = Player.health.current - instance.damage / #activeGoblins
-        Sounds.hits.punch:play()
         Sounds.hurt.player:play()
     end
+end)
+
+local impact = cron.every(0.5, function()
+    Sounds.hits.punch:play()
 end)
 
 local walk1 = cron.every(0.9, function()
@@ -167,6 +170,7 @@ function Goblin:combat(dt)
             self.animations.attack:gotoFrame(1) -- reset animation to start over after pause
         else
             self.currentAnim = self.animations.attack
+            impact:update(dt)
             self:hurtPlayer(dt)
         end
     end

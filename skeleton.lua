@@ -78,13 +78,16 @@ local hurt = cron.every(0.5, function()
     end
 end)
 
-local hurtPlayer = cron.every(1, function()
+local hurtPlayer = cron.every(0.9, function()
     for _, instance in ipairs(activeSkeletons) do
         Player.health.current = Player.health.current - instance.damage / #activeSkeletons
         Player:tint()
-        Sounds.hits.punch:play()
         Sounds.hurt.player:play()
     end
+end)
+
+local impact = cron.every(0.9, function()
+    Sounds.hits.punch:play()
 end)
 
 local walk1 = cron.every(0.7, function()
@@ -167,6 +170,7 @@ function Skeleton:combat(dt)
             self.animations.attack:gotoFrame(1) -- reset animation to start over after pause
         else
             self.currentAnim = self.animations.attack
+            impact:update(dt)
             self:hurtPlayer(dt)
         end
     end

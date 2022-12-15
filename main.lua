@@ -11,7 +11,6 @@ local Centurion = require 'centurion'
 local Map = require 'map'
 local Sounds = require 'sounds'
 
-
 function love.load()
     Sounds:load()
     Skeleton.loadAssets()

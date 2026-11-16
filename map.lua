@@ -35,10 +35,12 @@ function Map:initialize()
 end
 
 function Map:nextStage()
-    self:clearPrevious()
-    if self.currentStage <= self.maxStages then
-        self.currentStage = self.currentStage + 1
+    if self.currentStage >= self.maxStages then
+        self.completed = true -- no stage after the last one, so show the victory message instead of loading one
+        return
     end
+    self:clearPrevious()
+    self.currentStage = self.currentStage + 1
     self:initialize()
     Player:resetPosition()
 end
@@ -51,6 +53,10 @@ function Map:clearPrevious()
 end
 
 function Map:update()
+    if self.completed then
+        GUI:victoryMessage()
+        return
+    end
     if self.currentStage == 4 then
         Player.maxSpeed = 500
     end

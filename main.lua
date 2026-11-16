@@ -1,5 +1,4 @@
--- CS50 Final Project
--- Game with LOVE 2D
+-- Wilderness: a 2D combat platformer built with LÖVE
 
 love.graphics.setDefaultFilter("nearest", "nearest")
 local Player = require 'player'
@@ -64,4 +63,11 @@ function EndContact(a, b, collision)
     Centurion.endContact(a, b, collision)
     Goblin.endContact(a, b, collision)
     Player:endContact(a, b, collision)
+end
+
+-- Headless smoke test hook: `love . --smoke` (see tests/smoke.lua)
+for _, value in ipairs(arg or {}) do
+    if value == "--smoke" then
+        require("tests.smoke").install()
+    end
 end

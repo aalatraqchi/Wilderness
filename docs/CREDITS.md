@@ -2,10 +2,10 @@
 
 ## Art and Audio
 
-- **Character sprites:** player, skeleton, goblin, and centurion sprite sheets by [MoikMellah](https://opengameart.org/users/moikmellah) on OpenGameArt.
-- **Tileset, backgrounds, and sound effects:** sourced from [OpenGameArt](https://opengameart.org/).
+- **Character sprites:** player, skeleton, goblin, and centurion sprite sheets based on MoikMellah's "MV Platformer" sets on [OpenGameArt](https://opengameart.org/users/moikmellah), released under CC0.
+- **Tileset and sound effects:** sourced from [OpenGameArt](https://opengameart.org/).
 
-These assets remain the property of their authors and are used under the terms of their OpenGameArt licenses. They are not covered by this repository's MIT License.
+These assets remain the property of their authors and are used under the terms of their licenses. They are not covered by this repository's MIT License.
 
 ## Libraries
 

@@ -64,3 +64,10 @@ function EndContact(a, b, collision)
     Goblin.endContact(a, b, collision)
     Player:endContact(a, b, collision)
 end
+
+-- Headless smoke test hook: `love . --smoke` (see tests/smoke.lua)
+for _, value in ipairs(arg or {}) do
+    if value == "--smoke" then
+        require("tests.smoke").install()
+    end
+end

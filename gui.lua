@@ -21,6 +21,10 @@ function GUI:load()
     self.objective.x = 30
     self.objective.y = 400
     self.objective.text = "Kill all enemies and reach the end to proceed to the next stage!"
+
+    self.victory = {}
+    self.victory.y = 300
+    self.victory.text = "You cleared the Wilderness! Thanks for playing."
 end
 
 function GUI:update(dt)
@@ -56,6 +60,11 @@ function GUI:objectiveMessage()
         love.graphics.setNewFont(16)
         love.graphics.print(self.objective.text, self.objective.x, self.objective.y)
     end
+end
+
+function GUI:victoryMessage()
+    love.graphics.setNewFont(32)
+    love.graphics.printf(self.victory.text, 0, self.victory.y, love.graphics.getWidth(), "center")
 end
 
 return GUI

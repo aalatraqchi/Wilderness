@@ -1,5 +1,4 @@
--- CS50 Final Project
--- Game with LOVE 2D
+-- Wilderness: a 2D combat platformer built with LÖVE
 
 love.graphics.setDefaultFilter("nearest", "nearest")
 local Player = require 'player'
